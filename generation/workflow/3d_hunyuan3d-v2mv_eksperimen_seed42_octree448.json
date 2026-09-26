@@ -1,0 +1,1001 @@
+{
+  "id": "e174bad3-8a1f-4c92-9b3a-2f6c1d0a9e11",
+  "revision": 0,
+  "last_node_id": 18,
+  "last_link_id": 21,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "ImageOnlyCheckpointLoader",
+      "pos": [
+        40,
+        -1000
+      ],
+      "size": [
+        400,
+        100
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            1
+          ]
+        },
+        {
+          "name": "CLIP_VISION",
+          "type": "CLIP_VISION",
+          "links": [
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            6
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "ImageOnlyCheckpointLoader",
+        "models": [
+          {
+            "name": "hunyuan3d-dit-v2-mv.safetensors",
+            "url": "https://huggingface.co/tencent/Hunyuan3D-2mv/resolve/main/hunyuan3d-dit-v2-mv/model.fp16.safetensors",
+            "directory": "checkpoints"
+          }
+        ]
+      },
+      "widgets_values": [
+        "hunyuan3d-dit-v2-mv.safetensors"
+      ]
+    },
+    {
+      "id": 17,
+      "type": "MarkdownNote",
+      "pos": [
+        40,
+        -860
+      ],
+      "size": [
+        400,
+        240
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "\n## PENTING: Checkpoint Berbeda\n\nNode `Hunyuan3Dv2ConditioningMultiView` hanya kompatibel dengan checkpoint keluarga **Hunyuan3D-2mv** (bukan v2.1 seperti workflow asli).\n\n**Download:**\n- [hunyuan3d-dit-v2-mv (model.fp16.safetensors)](https://huggingface.co/tencent/Hunyuan3D-2mv)\n\nRename menjadi `hunyuan3d-dit-v2-mv.safetensors`, taruh di:\n```\nComfyUI/models/checkpoints/\n```\nVarian lebih cepat: `hunyuan3d-dit-v2-mv-turbo` / `-mv-fast`. Selalu cek nama file terbaru di repo HuggingFace resmi karena packaging bisa berubah.\n"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 18,
+      "type": "MarkdownNote",
+      "pos": [
+        40,
+        -580
+      ],
+      "size": [
+        400,
+        420
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "\n## Catatan Teknis vs Proposal\n\n**1. Multi-View Conditioning**\nWorkflow ini memakai node native `Hunyuan3Dv2ConditioningMultiView` (front/left/back/right) \u2014 ini yang paling mendekati klaim 'memproses gambar ortogonal secara simultan sebagai jangkar geometri'. Minimal 1 view wajib diisi, idealnya 3-4 view (front+back+left/right) untuk hasil terbaik.\n\n**2. Algoritma ekstraksi mesh - DIKOREKSI**\nNode `VoxelToMesh` hanya punya 2 opsi: `surface net` dan `basic`. Percobaan awal memakai `basic` menghasilkan permukaan blocky/voxel (semua triangle axis-aligned & seragam ukuran, sama seperti octree_resolution) - BUKAN sharp edges mekanis, itu artefak resolusi grid. Workflow ini dikembalikan ke `surface net` (interpolasi vertex per-sel, permukaan jauh lebih halus). Untuk detail lebih tajam, naikkan `octree_resolution` di VAEDecodeHunyuan3D (misal 512), bukan ganti algoritma ke basic.\n\n**3. Belum terselesaikan: Parametrik/CAD-ready**\nComfyUI (stok) TIDAK punya node bawaan untuk mengubah mesh -> B-rep parametrik (sketch/feature/constraint). Output SaveGLB tetap berupa mesh diskrit. Jika bagian Metode proposal mengklaim 'kompatibel dengan ekosistem CAD parametrik', perlu modul tambahan di luar ComfyUI (mis. surface fitting / primitive & feature recognition, atau remeshing/smoothing seperti pymeshlab/Blender) yang belum direpresentasikan di graph ini.\n\n**4. [2026-07-09] PARAMETER EKSPERIMEN DIBEKUKAN**\nUntuk matriks komparasi (8 objek TraceParts): seed=42 (fixed, bukan randomize), steps=30, cfg=5.0, euler/normal, octree_resolution=448 (turun dari 512 \u2014 terbukti overkill: poligon 2x, kehalusan tak berubah), VoxelToMesh=surface net. JANGAN diubah di tengah eksperimen. Catatan: `EmptyLatentHunyuan3Dv2.resolution` (4096) lebih menentukan detail geometri daripada octree_resolution.\n\n**5. Urutan input view WAJIB benar**\nfront.png->front, left.png->left, back.png->back, right.png->right (hasil render_ortho_views.py). Salah pasang tidak error tapi hasil diam-diam rusak."
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 2,
+      "type": "LoadImage",
+      "pos": [
+        480,
+        -1000
+      ],
+      "size": [
+        270,
+        300
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            7
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "front_view.png",
+        "image"
+      ],
+      "title": "Load Image - FRONT"
+    },
+    {
+      "id": 3,
+      "type": "LoadImage",
+      "pos": [
+        480,
+        -660
+      ],
+      "size": [
+        270,
+        300
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            8
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "left_view.png",
+        "image"
+      ],
+      "title": "Load Image - LEFT"
+    },
+    {
+      "id": 4,
+      "type": "LoadImage",
+      "pos": [
+        480,
+        -320
+      ],
+      "size": [
+        270,
+        300
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            9
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "back_view.png",
+        "image"
+      ],
+      "title": "Load Image - BACK"
+    },
+    {
+      "id": 5,
+      "type": "LoadImage",
+      "pos": [
+        480,
+        20
+      ],
+      "size": [
+        270,
+        300
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            10
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "right_view.png",
+        "image"
+      ],
+      "title": "Load Image - RIGHT"
+    },
+    {
+      "id": 11,
+      "type": "ModelSamplingAuraFlow",
+      "pos": [
+        840,
+        -1160
+      ],
+      "size": [
+        270,
+        58
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 1
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            17
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "ModelSamplingAuraFlow"
+      },
+      "widgets_values": [
+        1
+      ]
+    },
+    {
+      "id": 6,
+      "type": "CLIPVisionEncode",
+      "pos": [
+        840,
+        -960
+      ],
+      "size": [
+        270,
+        80
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip_vision",
+          "type": "CLIP_VISION",
+          "link": 2
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CLIP_VISION_OUTPUT",
+          "type": "CLIP_VISION_OUTPUT",
+          "links": [
+            11
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "CLIPVisionEncode"
+      },
+      "widgets_values": [
+        "center"
+      ],
+      "title": "CLIP Vision Encode - FRONT"
+    },
+    {
+      "id": 7,
+      "type": "CLIPVisionEncode",
+      "pos": [
+        840,
+        -660
+      ],
+      "size": [
+        270,
+        80
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip_vision",
+          "type": "CLIP_VISION",
+          "link": 3
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 8
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CLIP_VISION_OUTPUT",
+          "type": "CLIP_VISION_OUTPUT",
+          "links": [
+            12
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "CLIPVisionEncode"
+      },
+      "widgets_values": [
+        "center"
+      ],
+      "title": "CLIP Vision Encode - LEFT"
+    },
+    {
+      "id": 8,
+      "type": "CLIPVisionEncode",
+      "pos": [
+        840,
+        -320
+      ],
+      "size": [
+        270,
+        80
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip_vision",
+          "type": "CLIP_VISION",
+          "link": 4
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 9
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CLIP_VISION_OUTPUT",
+          "type": "CLIP_VISION_OUTPUT",
+          "links": [
+            13
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "CLIPVisionEncode"
+      },
+      "widgets_values": [
+        "center"
+      ],
+      "title": "CLIP Vision Encode - BACK"
+    },
+    {
+      "id": 9,
+      "type": "CLIPVisionEncode",
+      "pos": [
+        840,
+        20
+      ],
+      "size": [
+        270,
+        80
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip_vision",
+          "type": "CLIP_VISION",
+          "link": 5
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 10
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CLIP_VISION_OUTPUT",
+          "type": "CLIP_VISION_OUTPUT",
+          "links": [
+            14
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "CLIPVisionEncode"
+      },
+      "widgets_values": [
+        "center"
+      ],
+      "title": "CLIP Vision Encode - RIGHT"
+    },
+    {
+      "id": 10,
+      "type": "Hunyuan3Dv2ConditioningMultiView",
+      "pos": [
+        1180,
+        -620
+      ],
+      "size": [
+        260,
+        150
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "front",
+          "type": "CLIP_VISION_OUTPUT",
+          "link": 11
+        },
+        {
+          "name": "left",
+          "type": "CLIP_VISION_OUTPUT",
+          "link": 12
+        },
+        {
+          "name": "back",
+          "type": "CLIP_VISION_OUTPUT",
+          "link": 13
+        },
+        {
+          "name": "right",
+          "type": "CLIP_VISION_OUTPUT",
+          "link": 14
+        }
+      ],
+      "outputs": [
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "links": [
+            15
+          ]
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "links": [
+            16
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "Hunyuan3Dv2ConditioningMultiView"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 12,
+      "type": "EmptyLatentHunyuan3Dv2",
+      "pos": [
+        1180,
+        -400
+      ],
+      "size": [
+        270,
+        82
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            18
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "EmptyLatentHunyuan3Dv2"
+      },
+      "widgets_values": [
+        4096,
+        1
+      ]
+    },
+    {
+      "id": 13,
+      "type": "KSampler",
+      "pos": [
+        1500,
+        -750
+      ],
+      "size": [
+        270,
+        262
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 17
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 15
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 16
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 18
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            19
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        42,
+        "fixed",
+        30,
+        5.0,
+        "euler",
+        "normal",
+        1
+      ]
+    },
+    {
+      "id": 14,
+      "type": "VAEDecodeHunyuan3D",
+      "pos": [
+        1830,
+        -520
+      ],
+      "size": [
+        270,
+        102
+      ],
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 19
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 6
+        }
+      ],
+      "outputs": [
+        {
+          "name": "VOXEL",
+          "type": "VOXEL",
+          "links": [
+            20
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "VAEDecodeHunyuan3D"
+      },
+      "widgets_values": [
+        8000,
+        448
+      ]
+    },
+    {
+      "id": 15,
+      "type": "VoxelToMesh",
+      "pos": [
+        1830,
+        -340
+      ],
+      "size": [
+        270,
+        82
+      ],
+      "flags": {},
+      "order": 16,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "voxel",
+          "type": "VOXEL",
+          "link": 20
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MESH",
+          "type": "MESH",
+          "links": [
+            21
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "VoxelToMesh"
+      },
+      "widgets_values": [
+        "surface net",
+        0.6
+      ]
+    },
+    {
+      "id": 16,
+      "type": "SaveGLB",
+      "pos": [
+        2160,
+        -750
+      ],
+      "size": [
+        700,
+        700
+      ],
+      "flags": {},
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mesh",
+          "type": "MESH",
+          "link": 21
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "SaveGLB"
+      },
+      "widgets_values": [
+        "mesh/ComfyUI_MultiView",
+        ""
+      ]
+    }
+  ],
+  "links": [
+    [
+      1,
+      1,
+      0,
+      11,
+      0,
+      "MODEL"
+    ],
+    [
+      2,
+      1,
+      1,
+      6,
+      0,
+      "CLIP_VISION"
+    ],
+    [
+      3,
+      1,
+      1,
+      7,
+      0,
+      "CLIP_VISION"
+    ],
+    [
+      4,
+      1,
+      1,
+      8,
+      0,
+      "CLIP_VISION"
+    ],
+    [
+      5,
+      1,
+      1,
+      9,
+      0,
+      "CLIP_VISION"
+    ],
+    [
+      6,
+      1,
+      2,
+      14,
+      1,
+      "VAE"
+    ],
+    [
+      7,
+      2,
+      0,
+      6,
+      1,
+      "IMAGE"
+    ],
+    [
+      8,
+      3,
+      0,
+      7,
+      1,
+      "IMAGE"
+    ],
+    [
+      9,
+      4,
+      0,
+      8,
+      1,
+      "IMAGE"
+    ],
+    [
+      10,
+      5,
+      0,
+      9,
+      1,
+      "IMAGE"
+    ],
+    [
+      11,
+      6,
+      0,
+      10,
+      0,
+      "CLIP_VISION_OUTPUT"
+    ],
+    [
+      12,
+      7,
+      0,
+      10,
+      1,
+      "CLIP_VISION_OUTPUT"
+    ],
+    [
+      13,
+      8,
+      0,
+      10,
+      2,
+      "CLIP_VISION_OUTPUT"
+    ],
+    [
+      14,
+      9,
+      0,
+      10,
+      3,
+      "CLIP_VISION_OUTPUT"
+    ],
+    [
+      15,
+      10,
+      0,
+      13,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      16,
+      10,
+      1,
+      13,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      17,
+      11,
+      0,
+      13,
+      0,
+      "MODEL"
+    ],
+    [
+      18,
+      12,
+      0,
+      13,
+      3,
+      "LATENT"
+    ],
+    [
+      19,
+      13,
+      0,
+      14,
+      0,
+      "LATENT"
+    ],
+    [
+      20,
+      14,
+      0,
+      15,
+      0,
+      "VOXEL"
+    ],
+    [
+      21,
+      15,
+      0,
+      16,
+      0,
+      "MESH"
+    ]
+  ],
+  "groups": [
+    {
+      "id": 1,
+      "title": "Step 1 - Load Multi-View Checkpoint (hunyuan3d-dit-v2-mv)",
+      "bounding": [
+        30,
+        -1030,
+        410,
+        180
+      ],
+      "color": "#3f789e",
+      "font_size": 22,
+      "flags": {}
+    },
+    {
+      "id": 2,
+      "title": "Step 2 - Upload 4 Orthogonal Views (Front / Left / Back / Right)",
+      "bounding": [
+        460,
+        -1030,
+        320,
+        1370
+      ],
+      "color": "#3f789e",
+      "font_size": 22,
+      "flags": {}
+    },
+    {
+      "id": 3,
+      "title": "Step 3 - Multi-View Conditioning & Sampling",
+      "bounding": [
+        800,
+        -1200,
+        990,
+        900
+      ],
+      "color": "#a1309e",
+      "font_size": 22,
+      "flags": {}
+    },
+    {
+      "id": 4,
+      "title": "Step 4 - Voxel to Mesh (surface net) & Export GLB",
+      "bounding": [
+        1790,
+        -770,
+        1090,
+        480
+      ],
+      "color": "#3f9e6b",
+      "font_size": 22,
+      "flags": {}
+    }
+  ],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.55,
+      "offset": [
+        200,
+        1200
+      ]
+    },
+    "frontendVersion": "1.34.9",
+    "workflowRendererVersion": "LG",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}

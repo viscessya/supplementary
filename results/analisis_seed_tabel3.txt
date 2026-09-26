@@ -1,0 +1,82 @@
+==============================================================================
+ANALISIS REPLIKASI SEED UNTUK TABLE 3 (R3-S)
+uji, gerbang, dan prediksi didaftarkan di
+rencana tertulis 20 Sep, sebelum generasi
+scipy 1.18.0 | numpy 2.5.1
+==============================================================================
+
+[G2] Kelengkapan lengan seed 123
+     hunyuan_m130_elev30_seed123          30/30 OK
+     hunyuan_m130_elev40_seed123          30/30 OK
+     hunyuan_persp_v4_elev30_seed123      30/30 OK
+     hunyuan_persp_v4_elev40_seed123      30/30 OK
+     hunyuan_backdrop_v1_elev40_seed123   30/30 OK
+
+[G1] Seed benar-benar berganti: Chamfer seed 123 vs seed 42, per objek
+     ambang: minimal 28/30 objek berbeda lebih dari 1e-06
+     hunyuan_m130_elev30_seed123          berbeda 29/30 | median |dCD| 0.00178  LULUS
+     hunyuan_m130_elev40_seed123          berbeda 30/30 | median |dCD| 0.00175  LULUS
+     hunyuan_persp_v4_elev30_seed123      berbeda 30/30 | median |dCD| 0.00134  LULUS
+     hunyuan_persp_v4_elev40_seed123      berbeda 30/30 | median |dCD| 0.00138  LULUS
+     hunyuan_backdrop_v1_elev40_seed123   berbeda 30/30 | median |dCD| 0.00208  LULUS
+     => LULUS
+
+[R1] Perspektif vs raw, 30 derajat
+     seed  42 (sudah di naskah, dihitung ulang di sini)
+       Chamfer       dasar 0.0302 -> varian 0.0249 | varian menang 21/30 | p=0.0128 Holm=0.0385  BETTER
+       F@0.01        dasar 0.5717 -> varian 0.6499 | varian menang 21/30 | p=0.0137 Holm=0.0385  BETTER
+       F@0.02        dasar 0.7733 -> varian 0.8244 | varian menang 21/30 | p=0.0216 Holm=0.0385  BETTER
+       Normal cons.  dasar 0.7231 -> varian 0.7712 | varian menang 23/30 | p=0.0001 Holm=0.0007  BETTER
+       Volume IoU    dasar 0.6619 -> varian 0.7513 | varian menang 23/30 | p=0.0002 Holm=0.0009  BETTER
+     seed 123 (BARU)
+       Chamfer       dasar 0.0297 -> varian 0.0252 | varian menang 22/30 | p=0.0197 Holm=0.0393  BETTER
+       F@0.01        dasar 0.5810 -> varian 0.6623 | varian menang 22/30 | p=0.0106 Holm=0.0318  BETTER
+       F@0.02        dasar 0.7788 -> varian 0.8158 | varian menang 22/30 | p=0.0384 Holm=0.0393  BETTER
+       Normal cons.  dasar 0.7261 -> varian 0.7651 | varian menang 22/30 | p=0.0010 Holm=0.0042  BETTER
+       Volume IoU    dasar 0.6522 -> varian 0.7424 | varian menang 24/30 | p=0.0001 Holm=0.0007  BETTER
+
+[R2] Perspektif vs raw, 40 derajat
+     seed  42 (sudah di naskah, dihitung ulang di sini)
+       Chamfer       dasar 0.0371 -> varian 0.0263 | varian menang 25/30 | p=0.0001 Holm=0.0001  BETTER
+       F@0.01        dasar 0.4908 -> varian 0.6290 | varian menang 26/30 | p=0.0000 Holm=0.0001  BETTER
+       F@0.02        dasar 0.7034 -> varian 0.8149 | varian menang 23/30 | p=0.0001 Holm=0.0001  BETTER
+       Normal cons.  dasar 0.6835 -> varian 0.7554 | varian menang 25/30 | p=0.0000 Holm=0.0000  BETTER
+       Volume IoU    dasar 0.5963 -> varian 0.7182 | varian menang 29/30 | p=0.0000 Holm=0.0000  BETTER
+     seed 123 (BARU)
+       Chamfer       dasar 0.0355 -> varian 0.0272 | varian menang 21/30 | p=0.0054 Holm=0.0054  BETTER
+       F@0.01        dasar 0.5083 -> varian 0.6319 | varian menang 24/30 | p=0.0001 Holm=0.0005  BETTER
+       F@0.02        dasar 0.7161 -> varian 0.8069 | varian menang 23/30 | p=0.0004 Holm=0.0008  BETTER
+       Normal cons.  dasar 0.6896 -> varian 0.7508 | varian menang 23/30 | p=0.0001 Holm=0.0005  BETTER
+       Volume IoU    dasar 0.6118 -> varian 0.7035 | varian menang 25/30 | p=0.0001 Holm=0.0003  BETTER
+
+[R3] Latar abu-abu vs raw, 40 derajat
+     seed  42 (sudah di naskah, dihitung ulang di sini)
+       Chamfer       dasar 0.0371 -> varian 0.0359 | varian menang 15/30 | p=0.5978 Holm=1.0000  n.s.
+       F@0.01        dasar 0.4908 -> varian 0.4987 | varian menang 12/30 | p=1.0000 Holm=1.0000  n.s.
+       F@0.02        dasar 0.7034 -> varian 0.7112 | varian menang 13/30 | p=0.9838 Holm=1.0000  n.s.
+       Normal cons.  dasar 0.6835 -> varian 0.6997 | varian menang 20/30 | p=0.0066 Holm=0.0332  BETTER
+       Volume IoU    dasar 0.5963 -> varian 0.6081 | varian menang 18/30 | p=0.2367 Holm=0.9466  n.s.
+     seed 123 (BARU)
+       Chamfer       dasar 0.0355 -> varian 0.0349 | varian menang 13/30 | p=0.5699 Holm=0.8530  n.s.
+       F@0.01        dasar 0.5083 -> varian 0.5044 | varian menang 11/30 | p=0.2129 Holm=0.8530  n.s.
+       F@0.02        dasar 0.7161 -> varian 0.7262 | varian menang 17/30 | p=0.2621 Holm=0.8530  n.s.
+       Normal cons.  dasar 0.6896 -> varian 0.7045 | varian menang 16/30 | p=0.2129 Holm=0.8530  n.s.
+       Volume IoU    dasar 0.6118 -> varian 0.6259 | varian menang 18/30 | p=0.1706 Holm=0.8530  n.s.
+
+==============================================================================
+[PREDIKSI] dicocokkan otomatis dengan yang tertulis di rencana 20 Sep
+==============================================================================
+  P1 R2 (40 derajat) signifikan kelima metrik   : 5/5 (Chamfer, F@0.01, F@0.02, Normal cons., Volume IoU) -> TERBUKTI
+  P2 R1 (30 derajat) signifikan minimal 3 dari 5: 5/5 (Chamfer, F@0.01, F@0.02, Normal cons., Volume IoU) -> TERBUKTI
+  P3 keunggulan Chamfer 40 > 30 derajat          : 40deg 0.0083 vs 30deg 0.0045 -> TERBUKTI
+  P4 R3 normal consistency TIDAK signifikan      : Holm p=0.8530, menang 16/30 -> TERBUKTI
+
+==============================================================================
+KONSEKUENSI UNTUK NASKAH (aturan keputusan rencana 20 Sep)
+==============================================================================
+  Aturan 1: klaim perspektif DIPERTAHANKAN, ditambah keterangan bahwa
+            keunggulan di 40 derajat bertahan pada seed kedua.
+            Kalimat 'but that observation rests on seed 42' di Discussion diganti.
+  Aturan 4: latar abu-abu tidak bertahan. Laporkan satu anak kalimat sebagai
+            artefak multiplisitas.
+  Aturan 6: hasil utama naskah (elevasi, 3 seed, n=30) tidak tersentuh analisis ini.

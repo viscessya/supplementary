@@ -1,0 +1,53 @@
+==============================================================================
+ANALISIS SEED n30
+==============================================================================
+
+[G1] Gerbang reprodusibilitas: obj05, kanonik (PC sekarang) vs E4 lama (3 Agu), toleransi |dCD| <= 0.0005
+     hunyuan_m130_elev0_seed123   kanonik 0.090664 | e4 0.090664 | |d|=0.000000 LULUS
+     hunyuan_m130_elev0_seed777   kanonik 0.052096 | e4 0.052096 | |d|=0.000000 LULUS
+     hunyuan_m130_elev20_seed123  kanonik 0.029864 | e4 0.029864 | |d|=0.000000 LULUS
+     hunyuan_m130_elev20_seed777  kanonik 0.027658 | e4 0.027658 | |d|=0.000000 LULUS
+     => LULUS: GLB E4 lama boleh dipakai untuk obj01-08 yang belum digenerate ulang
+[G1b] Evaluator sekarang vs CSV 3 Agu untuk GLB E4 yang sama: 32 pasangan, |dCD| maks 0.00e+00
+
+[G2] Kelengkapan: 30/30 objek punya 6 sel (2 elevasi x 3 seed)
+     objek memakai GLB E4 lama: obj01, obj02, obj03, obj04, obj06, obj07, obj08
+
+[P0] Pembanding seed 42 saja (n=30) -- harus sama dengan Table 3 kalau n=30
+     Chamfer: 0deg 0.0390 -> 20deg 0.0264, rerata perbaikan 0.0126
+
+[U] UJI UTAMA: rerata 3 seed per objek, Wilcoxon dua sisi, Holm atas 5 metrik (n=30)
+     Chamfer       0deg 0.0362 -> 20deg 0.0263 | membaik 24/30 | p=0.0003 (exact) Holm p=0.0013
+     F@0.01        0deg 0.5414 -> 20deg 0.6219 | membaik 21/30 | p=0.0043 (exact) Holm p=0.0130
+     F@0.02        0deg 0.7421 -> 20deg 0.8139 | membaik 24/30 | p=0.0007 (exact) Holm p=0.0027
+     Normal cons.  0deg 0.7099 -> 20deg 0.7489 | membaik 18/30 | p=0.0221 (exact) Holm p=0.0273
+     Volume IoU    0deg 0.6404 -> 20deg 0.6990 | membaik 21/30 | p=0.0137 (exact) Holm p=0.0273
+     Hodges-Lehmann perbaikan Chamfer: 0.0046 (95% CI 0.0022 .. 0.0140); rerata 0.0099
+
+[S1] Tiap seed terpisah: Wilcoxon + Holm atas 5 metrik
+     seed  42: rerata perbaikan CD 0.0126 | Holm p Chamfer=0.029 F@0.01=0.048 F@0.02=0.048 Normal cons.=0.048 Volume IoU=0.048 | lolos<0.05: 5/5
+     seed 123: rerata perbaikan CD 0.0103 | Holm p Chamfer=0.003 F@0.01=0.017 F@0.02=0.008 Normal cons.=0.100 Volume IoU=0.055 | lolos<0.05: 3/5
+     seed 777: rerata perbaikan CD 0.0069 | Holm p Chamfer=0.005 F@0.01=0.023 F@0.02=0.140 Normal cons.=0.056 Volume IoU=0.428 | lolos<0.05: 2/5
+
+[S2] Per objek: arah perbaikan Chamfer di 3 seed dan rasio efek / rentang seed
+     3 membaik : 17/30
+     3 memburuk: 4/30
+     campur    : 9/30
+     rasio efek/rentang > 1: 10/30
+
+[S3] Konsentrasi (rerata 3 seed)
+     6 teratas: obj20 0.0645, obj25 0.0498, obj05 0.0486, obj24 0.0303, obj14 0.0294, obj21 0.0199 ...
+     porsi 4 teratas dari total perbaikan: 65% (seed 42 di naskah: 85%)
+     4 pendorong naskah masih 4 teratas: True
+     tanpa 4 pendorong (n=26): Wilcoxon p=0.0036, membaik 20/26
+
+[S4] Sebaran antar-seed (SD Chamfer) di 0 vs 20 derajat
+     KONFIRMATORI: 17 objek yang belum pernah dicek seed (n=17): SD0 > SD20 pada 10/17, median SD0 0.0014 vs SD20 0.0008, Wilcoxon p=0.1901
+     deskriptif: seluruh objek (n=30): SD0 > SD20 pada 18/30, median SD0 0.0021 vs SD20 0.0016, Wilcoxon p=0.0523
+
+[PREDIKSI] dicocokkan otomatis dengan yang tertulis di rencana 17 Sep
+     P1 rerata perbaikan CD 3-seed < 0.0126            : 0.0099 -> TERBUKTI
+     P2 uji utama Chamfer Holm p < 0.05                : 0.0013 -> TERBUKTI
+     P3a 4 pendorong tetap 4 teratas                   : TERBUKTI
+     P3b porsi 4 teratas < 85%                          : 65% -> TERBUKTI
+     P4 S4 konfirmatori TIDAK signifikan (p >= 0.05)   : p=0.1901 -> TERBUKTI

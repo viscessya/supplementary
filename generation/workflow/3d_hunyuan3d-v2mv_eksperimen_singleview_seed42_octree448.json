@@ -1,0 +1,321 @@
+{
+  "id": "f285cbe4-9b2f-4d03-8c4b-3a7d2e1b0f22",
+  "revision": 0,
+  "last_node_id": 18,
+  "last_link_id": 21,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "ImageOnlyCheckpointLoader",
+      "pos": [40, -1000],
+      "size": [400, 100],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {"name": "MODEL", "type": "MODEL", "links": [1]},
+        {"name": "CLIP_VISION", "type": "CLIP_VISION", "links": [2]},
+        {"name": "VAE", "type": "VAE", "links": [6]}
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "ImageOnlyCheckpointLoader",
+        "models": [
+          {
+            "name": "hunyuan3d-dit-v2-mv.safetensors",
+            "url": "https://huggingface.co/tencent/Hunyuan3D-2mv/resolve/main/hunyuan3d-dit-v2-mv/model.fp16.safetensors",
+            "directory": "checkpoints"
+          }
+        ]
+      },
+      "widgets_values": ["hunyuan3d-dit-v2-mv.safetensors"]
+    },
+    {
+      "id": 17,
+      "type": "MarkdownNote",
+      "pos": [40, -860],
+      "size": [400, 300],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "\n## VARIAN SINGLE-VIEW (kondisi eksperimen 2)\n\nWorkflow ini adalah varian SINGLE-VIEW dari workflow multi-view beku (`3d_hunyuan3d-v2mv_eksperimen_seed42_octree448.json`).\n\n**Perbedaan SATU-SATUNYA:** node conditioning = `Hunyuan3Dv2Conditioning` (1 gambar: front.png saja), bukan `Hunyuan3Dv2ConditioningMultiView`.\n\n**Checkpoint SAMA:** `hunyuan3d-dit-v2-mv.safetensors` — sengaja, supaya perbedaan hasil murni dari jumlah view, bukan beda model.\n\n**Parameter beku SAMA (JANGAN diubah):** seed=42 fixed, steps=30, cfg=5.0, euler/normal, EmptyLatent resolution=4096, octree_resolution=448, VoxelToMesh=surface net.\n\n**Input:** `renders/objXX_*/front.png` (view yang sama dengan input front pada kondisi multi-view).\n\n**Output:** rename hasil GLB → `results/hunyuan_sv/objXX.glb`.\n"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 18,
+      "type": "MarkdownNote",
+      "pos": [40, -500],
+      "size": [400, 220],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "\n## Logging (sama seperti baseline MV)\n\n1. Sebelum queue: jalankan `nvidia-smi --loop=2 > vram_log_hunyuan_sv.csv` di terminal terpisah.\n2. Catat waktu per objek dari log console ComfyUI (simpan lognya).\n3. Hati-hati cache-hit: kalau re-queue tanpa mengubah input, waktu 0 detik = cache, jangan dipakai sebagai data.\n4. Setelah 8 objek selesai: salin GLB ke `results/hunyuan_sv/objXX.glb`.\n"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 2,
+      "type": "LoadImage",
+      "pos": [480, -1000],
+      "size": [270, 300],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {"name": "IMAGE", "type": "IMAGE", "links": [7]},
+        {"name": "MASK", "type": "MASK", "links": null}
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": ["front.png", "image"],
+      "title": "Load Image - FRONT (satu-satunya view)"
+    },
+    {
+      "id": 6,
+      "type": "CLIPVisionEncode",
+      "pos": [840, -960],
+      "size": [270, 80],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {"name": "clip_vision", "type": "CLIP_VISION", "link": 2},
+        {"name": "image", "type": "IMAGE", "link": 7}
+      ],
+      "outputs": [
+        {"name": "CLIP_VISION_OUTPUT", "type": "CLIP_VISION_OUTPUT", "links": [11]}
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "CLIPVisionEncode"
+      },
+      "widgets_values": ["center"],
+      "title": "CLIP Vision Encode - FRONT"
+    },
+    {
+      "id": 11,
+      "type": "ModelSamplingAuraFlow",
+      "pos": [840, -1160],
+      "size": [270, 58],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {"name": "model", "type": "MODEL", "link": 1}
+      ],
+      "outputs": [
+        {"name": "MODEL", "type": "MODEL", "links": [17]}
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "ModelSamplingAuraFlow"
+      },
+      "widgets_values": [1]
+    },
+    {
+      "id": 10,
+      "type": "Hunyuan3Dv2Conditioning",
+      "pos": [1180, -620],
+      "size": [260, 100],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {"name": "clip_vision_output", "type": "CLIP_VISION_OUTPUT", "link": 11}
+      ],
+      "outputs": [
+        {"name": "positive", "type": "CONDITIONING", "links": [15]},
+        {"name": "negative", "type": "CONDITIONING", "links": [16]}
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "Hunyuan3Dv2Conditioning"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 12,
+      "type": "EmptyLatentHunyuan3Dv2",
+      "pos": [1180, -400],
+      "size": [270, 82],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {"name": "LATENT", "type": "LATENT", "links": [18]}
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "EmptyLatentHunyuan3Dv2"
+      },
+      "widgets_values": [4096, 1]
+    },
+    {
+      "id": 13,
+      "type": "KSampler",
+      "pos": [1500, -750],
+      "size": [270, 262],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {"name": "model", "type": "MODEL", "link": 17},
+        {"name": "positive", "type": "CONDITIONING", "link": 15},
+        {"name": "negative", "type": "CONDITIONING", "link": 16},
+        {"name": "latent_image", "type": "LATENT", "link": 18}
+      ],
+      "outputs": [
+        {"name": "LATENT", "type": "LATENT", "links": [19]}
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [42, "fixed", 30, 5.0, "euler", "normal", 1]
+    },
+    {
+      "id": 14,
+      "type": "VAEDecodeHunyuan3D",
+      "pos": [1830, -520],
+      "size": [270, 102],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {"name": "samples", "type": "LATENT", "link": 19},
+        {"name": "vae", "type": "VAE", "link": 6}
+      ],
+      "outputs": [
+        {"name": "VOXEL", "type": "VOXEL", "links": [20]}
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "VAEDecodeHunyuan3D"
+      },
+      "widgets_values": [8000, 448]
+    },
+    {
+      "id": 15,
+      "type": "VoxelToMesh",
+      "pos": [1830, -340],
+      "size": [270, 82],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {"name": "voxel", "type": "VOXEL", "link": 20}
+      ],
+      "outputs": [
+        {"name": "MESH", "type": "MESH", "links": [21]}
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "VoxelToMesh"
+      },
+      "widgets_values": ["surface net", 0.6]
+    },
+    {
+      "id": 16,
+      "type": "SaveGLB",
+      "pos": [2160, -750],
+      "size": [700, 700],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {"name": "mesh", "type": "MESH", "link": 21}
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.59",
+        "Node name for S&R": "SaveGLB"
+      },
+      "widgets_values": ["mesh/ComfyUI_SingleView", ""]
+    }
+  ],
+  "links": [
+    [1, 1, 0, 11, 0, "MODEL"],
+    [2, 1, 1, 6, 0, "CLIP_VISION"],
+    [6, 1, 2, 14, 1, "VAE"],
+    [7, 2, 0, 6, 1, "IMAGE"],
+    [11, 6, 0, 10, 0, "CLIP_VISION_OUTPUT"],
+    [15, 10, 0, 13, 1, "CONDITIONING"],
+    [16, 10, 1, 13, 2, "CONDITIONING"],
+    [17, 11, 0, 13, 0, "MODEL"],
+    [18, 12, 0, 13, 3, "LATENT"],
+    [19, 13, 0, 14, 0, "LATENT"],
+    [20, 14, 0, 15, 0, "VOXEL"],
+    [21, 15, 0, 16, 0, "MESH"]
+  ],
+  "groups": [
+    {
+      "id": 1,
+      "title": "Step 1 - Load Checkpoint (sama dengan MV: hunyuan3d-dit-v2-mv)",
+      "bounding": [30, -1030, 410, 180],
+      "color": "#3f789e",
+      "font_size": 22,
+      "flags": {}
+    },
+    {
+      "id": 2,
+      "title": "Step 2 - Upload 1 View Saja (FRONT)",
+      "bounding": [460, -1030, 320, 350],
+      "color": "#3f789e",
+      "font_size": 22,
+      "flags": {}
+    },
+    {
+      "id": 3,
+      "title": "Step 3 - Single-View Conditioning & Sampling (parameter beku)",
+      "bounding": [800, -1200, 990, 900],
+      "color": "#a1309e",
+      "font_size": 22,
+      "flags": {}
+    },
+    {
+      "id": 4,
+      "title": "Step 4 - Voxel to Mesh (surface net) & Export GLB",
+      "bounding": [1790, -770, 1090, 480],
+      "color": "#3f9e6b",
+      "font_size": 22,
+      "flags": {}
+    }
+  ],
+  "config": {},
+  "extra": {
+    "ds": {"scale": 0.55, "offset": [200, 1200]},
+    "frontendVersion": "1.34.9",
+    "workflowRendererVersion": "LG",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}

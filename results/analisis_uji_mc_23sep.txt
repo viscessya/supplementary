@@ -1,0 +1,43 @@
+==============================================================================
+ANALISIS UJI B: surface net (ComfyUI) vs marching cubes, grid voxel yang sama, seed 42
+==============================================================================
+
+[G0] Determinisme: SN ulang vs GLB lama (hasil_evaluasi_n30.csv)
+     diperiksa 60 | gagal 0
+
+[T] Topologi per ekstraktor (median, [min-maks]; watertight = jumlah mesh)
+     sn hunyuan_m130_elev0   watertight  0/30 | non-manifold   3710.5 [243-789036] | boundary    6.5 [0-101] | komponen 1
+     sn hunyuan_m130_elev20  watertight  0/30 | non-manifold   5792.0 [477-16134] | boundary   11.5 [0-76] | komponen 2
+     sn TOTAL watertight 0/60 | median non-manifold 5224.0
+     mc hunyuan_m130_elev0   watertight 30/30 | non-manifold      0.0 [0-0] | boundary    0.0 [0-0] | komponen 2
+     mc hunyuan_m130_elev20  watertight 30/30 | non-manifold      0.0 [0-0] | boundary    0.0 [0-0] | komponen 2
+     mc TOTAL watertight 60/60 | median non-manifold 0.0
+
+[S1] Selisih geometri MC - SN pada grid yang sama (per mesh)
+     n 60 | median |dCD| 0.00005 | maks |dCD| 0.00537 | median dCD +0.00000 | noise floor 0.0044
+
+[S2] Efek elevasi 0 vs 20 derajat per ekstraktor (Wilcoxon exact dua sisi, Holm atas 5 metrik)
+     sn chamfer              0deg 0.0390 -> 20deg 0.0264 | membaik 22/30 | Holm p 0.0289
+     sn fscore@0.01          0deg 0.5344 -> 20deg 0.6107 | membaik 21/30 | Holm p 0.0482
+     sn fscore@0.02          0deg 0.7261 -> 20deg 0.8132 | membaik 18/30 | Holm p 0.0482
+     sn normal_consistency   0deg 0.7016 -> 20deg 0.7496 | membaik 21/30 | Holm p 0.0482
+     sn volume_iou           0deg 0.6224 -> 20deg 0.7057 | membaik 19/30 | Holm p 0.0482
+     mc chamfer              0deg 0.0389 -> 20deg 0.0263 | membaik 22/30 | Holm p 0.0332
+     mc fscore@0.01          0deg 0.5376 -> 20deg 0.6147 | membaik 20/30 | Holm p 0.0657
+     mc fscore@0.02          0deg 0.7283 -> 20deg 0.8135 | membaik 18/30 | Holm p 0.0657
+     mc normal_consistency   0deg 0.7037 -> 20deg 0.7509 | membaik 21/30 | Holm p 0.0657
+     mc volume_iou           0deg 0.6236 -> 20deg 0.7062 | membaik 20/30 | Holm p 0.0657
+
+[S3] Topologi 0 vs 20 derajat di bawah MC (Wilcoxon, deskriptif)
+     pred_nonmanifold_edges: median 0.0 -> 0.0 | semua pasangan sama, uji tidak berlaku
+     pred_boundary_edges: median 0.0 -> 0.0 | semua pasangan sama, uji tidak berlaku
+
+[KEPUTUSAN] aturan terdaftar di rencana 23 Sep
+     MC watertight 60/60, median non-manifold 0.0
+     => R-B  ARTEFAK EKSTRAKTOR: mesh MC dari grid yang sama sebagian besar valid. Klaim topologi turun dari judul, abstrak, dan kesimpulan.
+
+[PREDIKSI] dicocokkan dengan rencana 23 Sep
+     P1 R-B berlaku (MC watertight >= 30/60)          : TERBUKTI (60/60)
+     P2 median non-manifold MC < 10                   : TERBUKTI (0.0)
+     P3 median |dCD| MC-SN < 0.0044              : TERBUKTI (0.00005)
+     P4 efek elevasi Chamfer di bawah MC Holm p < 0.05 : TERBUKTI (0.0332)

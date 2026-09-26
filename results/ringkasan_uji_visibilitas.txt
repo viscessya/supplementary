@@ -1,0 +1,31 @@
+CD rerata elev0 = 0.0390 (manuskrip Table 3: 0.0390)
+CD rerata elev20 = 0.0264 (manuskrip Table 3: 0.0264)
+noise floor CD (rerata eval/noise_floor.csv) = 0.00445; objek dengan |dCD|>floor = 16/30
+Uji lintas objek, outcome dCD = CD(0) - CD(20), Spearman. 6 kandidat dicoba -> Bonferroni 0.05/6 = 0.0083
+  delta_terlihat_0_20                           n30 rho=+0.400 p=0.0284 | terukur n16 rho=+0.329 p=0.2128 | tanpa 4 pendorong n26 rho=+0.229 p=0.2611
+  luas_atas_saja (fitur_objek.csv)              n30 rho=+0.357 p=0.0527 | terukur n16 rho=+0.312 p=0.2398 | tanpa 4 pendorong n26 rho=+0.166 p=0.4163
+  delta_evidensi_0_20                           n30 rho=+0.307 p=0.0986 | terukur n16 rho=+0.212 p=0.4311 | tanpa 4 pendorong n26 rho=+0.133 p=0.5172
+  menyerempet_atau_tak_terlihat_0 (theta>=75)   n30 rho=+0.090 p=0.6375 | terukur n16 rho=+0.194 p=0.4713 | tanpa 4 pendorong n26 rho=-0.061 p=0.7665
+  evidensi_0                                    n30 rho=-0.033 p=0.8620 | terukur n16 rho=-0.006 p=0.9828 | tanpa 4 pendorong n26 rho=+0.079 p=0.7014
+  rasio_aspek (pengganggu)                      n30 rho=-0.158 p=0.4044 | terukur n16 rho=+0.000 p=1.0000 | tanpa 4 pendorong n26 rho=-0.109 p=0.5946
+[pembanding C-b] rho per objek (evidensi vs -CD): median=0.400, permutasi p=0.3564
+  median lintas objek elev  0: terlihat=0.5689 evidensi=0.4664 CD rerata=0.0390
+  median lintas objek elev 10: terlihat=0.6131 evidensi=0.4720 CD rerata=0.0285
+  median lintas objek elev 20: terlihat=0.6049 evidensi=0.4709 CD rerata=0.0264
+  median lintas objek elev 30: terlihat=0.5884 evidensi=0.4428 CD rerata=0.0302
+  median lintas objek elev 40: terlihat=0.5656 evidensi=0.4049 CD rerata=0.0371
+  pendorong elev  0: tak terlihat=59.5% | theta 60-90=3.0% | theta 0-60=37.5%
+  pendorong elev 20: tak terlihat=44.4% | theta 60-90=18.3% | theta 0-60=37.3%
+  lainnya   elev  0: tak terlihat=43.3% | theta 60-90=8.6% | theta 0-60=48.1%
+  lainnya   elev 20: tak terlihat=38.2% | theta 60-90=14.2% | theta 0-60=47.6%
+[3seed] TAMBAHAN SETELAH DATA -- dCD = rerata 3 seed (42/123/777)
+  delta_terlihat_0_20    n30 rho=+0.472 p=0.0084 | tanpa 4 pendorong rho=+0.314 p=0.1180 | terukur n15 rho=+0.250 p=0.3688
+  luas_atas_saja         n30 rho=+0.398 p=0.0294 | tanpa 4 pendorong rho=+0.214 p=0.2930 | terukur n15 rho=+0.232 p=0.4051
+  obj24: dV=7.5 pp (peringkat 13), dCD3=+0.0303 (peringkat 4)
+  obj15: dV=23.2 pp (peringkat 1), dCD3=+0.0008 (peringkat 20)
+  obj22: dV=17.9 pp (peringkat 4), dCD3=+0.0064 (peringkat 11)
+  obj13: dV=12.8 pp (peringkat 6), dCD3=-0.0115 (peringkat 30)
+  obj03: dV=11.5 pp (peringkat 8), dCD3=+0.0048 (peringkat 14)
+  obj14: dV=8.3 pp (peringkat 11), dCD3=+0.0294 (peringkat 5)
+[C-a] panel (a) memakai rerata 3 seed (42/123/777) dari hasil_seed_n30.csv
+[C-b] rho per objek (terlihat vs -CD, 5 elevasi): median=0.750, positif 24/30; permutasi 5000x median=0.450, p=0.0028
